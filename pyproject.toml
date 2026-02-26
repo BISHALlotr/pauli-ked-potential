@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pauli-ked"
+version = "0.1.0"
+description = "Radial derivative operators and kinetic-energy-density (KED) tools for orbital-free DFT style experiments."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+  { name = "B. Thapa", email = "bishal0720@gmail.com" },
+  { name = "A.C. Cancio" },
+]
+dependencies = [
+  "numpy>=1.22"
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7",
+  "ruff>=0.3",
+  "mypy>=1.6"
+]
