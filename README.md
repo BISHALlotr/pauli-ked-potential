@@ -1,6 +1,6 @@
-# pauli-ked
+# pauli-ked-potential
 
-Research software package for pauli potential visualization in orbital-free / kinetic energy functional experiments.
+Research software package for pauli potential & kinetic energy density visualization in orbital-free for deorbitalized metaGGA fucntional.
 
 ## Install (dev)
 bash
