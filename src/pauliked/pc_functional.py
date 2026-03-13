@@ -160,3 +160,63 @@ def F_RPP(s_sqr,q,*args):
     dF_dq = 0.0* np.ones(len(F))
     dF_ds_sqr = 0.0* np.ones(len(F))    
     return F, dF_ds_sqr, dF_dq
+
+def Fpgconst(s_sqr,q,*args):
+    '''General exponential functional developed by the team of Constantin, Fabinio, sala'''
+    beta = 8.0/81.0
+    c1 = 40.0/27.0
+    e = np.exp(-c1*s_sqr)     #add von-weizsacker
+    q_sqr = q*q
+    fvw, dfvwds2, dfvwdq   = FvW(s_sqr,q)        # added third one
+
+    f = e + beta*q_sqr + fvw
+    dfds2 = -c1 * e + dfvwds2
+    dfdq = 2.0*beta*q + dfvwdq
+
+    return f, dfds2, dfdq
+
+def Flkt(s_sqr,q):
+    '''Luo-Trickey functional.
+    A set of pseudodensities was generated for the atoms H through Ne with a typical Hamann norm-conserving nonlocal pseudopotential scheme using default radii.  Then a was found such that all post-scf Pauli potentials from those pseudodensities satisified v-theta >= 0.
+    '''
+
+    a = 1.3
+    b = 5.0/3.0
+    s = np.sqrt(s_sqr)
+    flkt = 1/np.cosh(a*s) + b*s_sqr
+    dfds2 = -a/(2*s)*1/np.cosh(a*s)*np.tanh(a*s) + b
+    dfdq = np.zeros(len(flkt))
+    return flkt, dfds2, dfdq
+
+def Fvt84(s_sqr,q,*args):
+    '''Valentin V. Karasiev,* Debajit Chakraborty, Olga A. Shukruto, and S. B. Trickey
+    Nonempirical generalized gradient approximation free-energy functional for orbital-free simulations'''
+    n = 4.0
+    m = 8.0
+    mu = 2.778
+    alpha =  1.2965     #mu - (5.0/3.0) + (5.0/27.0)
+    s = sqrt(s_sqr)
+
+    frac = mu* s_sqr * exp(-alpha*s_sqr)/(1 + mu * s_sqr)
+    sfact = (1 - exp(-alpha*s**(4.0))) * (s**(-2.0)-1)      #as it contain term of s named as s factors
+    fvt84 = 1.0 - frac + sfact + (5.0/3.0) * s_sqr       # this part is for vw
+
+    #these are the part of expression for dfds2
+    #second term in KEDf derivative
+    frac21 = (alpha*s_sqr-1)*mu*exp(-alpha*s_sqr)/(1+mu*s_sqr)
+    frac22 = mu**2*s_sqr*exp(-alpha*s_sqr)/(1+mu*s_sqr)**2
+    df2ds2 = frac21 + frac22
+    #third term in KEDf derivative
+    first = 2.0*alpha*(1 - s_sqr)*exp(-alpha*s_sqr**2)
+    secon = -(1 - exp(-alpha*s_sqr**2))/s_sqr**2
+    df3ds2 = first + secon
+
+    dfds2 = df3ds2 + df2ds2 + (5.0/3.0)
+    try:
+        zero = np.zeros(len(fvt84))
+    except TypeError:
+        zero = 0.0
+    dfdq = zero
+
+
+    return fvt84, dfds2, dfdq
